@@ -18,7 +18,7 @@
 
 (defroutes routes
   (POST "/event" [] (log-event))
-  (ANY "*" [] (route/not-found (slurp (io/resource "404.html")))))
+  (ANY "*"       [] (route/not-found)))
 
 (def application (wrap-defaults routes site-defaults))
 
