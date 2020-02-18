@@ -29,12 +29,14 @@
 (defroutes routes
   (POST "/events" [] (log-event))
   (GET  "/events" [] (get-events))
-  (ANY "*"       []  {:status 404}))
+  (ANY "*"        [] {:status 404}))
 
 (def app
-  (-> (handler/site routes)
-      (middleware/wrap-json-body {:keywords? true})
-       middleware/wrap-json-response))
+  (->
+   routes
+   handler/site
+   (middleware/wrap-json-body {:keywords? true})
+   middleware/wrap-json-response))
 
 (defn start [port]
   (ring/run-jetty application {:port port :join? false}))
