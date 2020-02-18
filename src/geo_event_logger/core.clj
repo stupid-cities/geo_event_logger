@@ -8,7 +8,11 @@
             [ring.adapter.jetty :as ring]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
 
-            [geo-event-logger.migrate :as schema])
+            [cheshire.core :as json]
+
+            [geo-event-logger.migrate :as schema]
+            [geo-event-logger.events :as events]
+            )
   (:gen-class))
 
 (defn log-event []
@@ -16,11 +20,21 @@
    :headers {"Content-Type" "text/plain"}
    :body "{}"})
 
-(defroutes routes
-  (POST "/event" [] (log-event))
-  (ANY "*"       [] {:status 404}))
+(defn get-events []
+  (let [events (events/all)]
+    {:status 200
+     :headers {"Content-Type" "text/plain"}
+     :body    (json/generate-string events)}))
 
-(def application (wrap-defaults routes site-defaults))
+(defroutes routes
+  (POST "/events" [] (log-event))
+  (GET  "/events" [] (get-events))
+  (ANY "*"       []  {:status 404}))
+
+(def app
+  (-> (handler/site routes)
+      (middleware/wrap-json-body {:keywords? true})
+       middleware/wrap-json-response))
 
 (defn start [port]
   (ring/run-jetty application {:port port :join? false}))

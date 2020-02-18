@@ -8,7 +8,9 @@
                  [compojure "1.6.1"]
                  [ring/ring-jetty-adapter "1.7.1"]
                  [ring/ring-defaults "0.1.2"]
+                 [ring/ring-json "0.3.1"]
 
+                 [cheshire "5.10.0"]
 
                  [environ "1.1.0"]
                  [org.clojure/java.jdbc "0.6.1"]
@@ -26,6 +28,6 @@
                                   [ring-mock "0.1.5"]]}
              :uberjar {:aot :all}}
 
-  :ring {:handler geo-event-logger.core/application
-         :init    geo-event-logger.migration/migrate}
+  :ring {:handler geo-event-logger.core/app
+         :init    geo-event-logger.migrate/migrate}
   )
