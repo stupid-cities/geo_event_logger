@@ -6,6 +6,7 @@
             [environ.core :refer [env]]
 
             [ring.adapter.jetty :as ring]
+            [ring.middleware.json :as middleware]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
 
             [cheshire.core :as json]
