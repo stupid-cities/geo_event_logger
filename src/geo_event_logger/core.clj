@@ -18,7 +18,7 @@
 
 (defroutes routes
   (POST "/event" [] (log-event))
-  (ANY "*"       [] (route/not-found)))
+  (ANY "*"       [] {:status 404}))
 
 (def application (wrap-defaults routes site-defaults))
 
