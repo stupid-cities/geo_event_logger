@@ -1,6 +1,6 @@
 (ns geo-event-logger.core
   (:require [compojure.core :refer [defroutes GET PUT POST DELETE ANY]]
-            [compojure.handler :refer [site]]
+            [compojure.handler :as handler]
             [compojure.route :as route]
             [clojure.java.io :as io]
             [environ.core :refer [env]]
@@ -40,7 +40,7 @@
    middleware/wrap-json-response))
 
 (defn start [port]
-  (ring/run-jetty application {:port port :join? false}))
+  (ring/run-jetty app {:port port :join? false}))
 
 (defn -main []
   (schema/migrate)
