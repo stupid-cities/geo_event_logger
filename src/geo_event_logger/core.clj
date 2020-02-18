@@ -12,7 +12,8 @@
             [cheshire.core :as json]
 
             [geo-event-logger.migrate :as schema]
-            [geo-event-logger.events :as events]
+            [geo-event-logger.events  :as events]
+            [geo-event-logger.db      :as db]
             )
   (:gen-class))
 
@@ -27,10 +28,15 @@
      :headers {"Content-Type" "text/plain"}
      :body    (json/generate-string events)}))
 
+(defn health-check []
+  (db/ping)
+  {:status 200 :body "OK"})
+
 (defroutes routes
-  (POST "/events" [] (log-event))
-  (GET  "/events" [] (get-events))
-  (ANY "*"        [] {:status 404}))
+  (GET "/-/health" [] (health-check))
+  (POST "/events"  [] (log-event))
+  (GET  "/events"  [] (get-events))
+  (ANY "*"         [] {:status 404}))
 
 (def app
   (->
