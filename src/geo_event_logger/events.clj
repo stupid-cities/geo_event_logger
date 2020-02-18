@@ -1,10 +1,9 @@
 (ns geo-event-logger.events
-  (:require [clojure.java.jdbc :as sql]))
-
-(def spec (or (System/getenv "DATABASE_URL")
-              "postgresql://localhost:5432/events"))
+  (:require [clojure.java.jdbc :as sql]
+            [geo-event-logger.db :as db]
+            ))
 
 (defn all []
-  (into [] (sql/query spec ["select * from events order by id desc"])))
+  (into [] (sql/query db/spec ["select * from events order by id desc"])))
 
-(defn create [event] (sql/insert! spec :events [:body] [event]))
+(defn create [event] (sql/insert! db/spec :events [:body] [event]))

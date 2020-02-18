@@ -14,18 +14,16 @@
 
   :min-lein-version "2.0.0"
   :plugins [[environ/environ.lein "0.3.1"]
-            [lein-ring "0.8.13"]]
+            [lein-ring "0.12.5"]]
+
+  :main ^:skip-aot geo-event-logger.core
 
   :uberjar-name "geo-event-logger-standalone.jar"
 
-  :main geo-event-logger.core
-  :uberjar {:aot :all}
-
-  :profiles {:production {:env {:production true}}}
+  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
+                                  [ring-mock "0.1.5"]]}
+             :uberjar {:aot :all}}
 
   :ring {:handler geo-event-logger.core/application
          :init    geo-event-logger.migration/migrate}
-
-
-
   )
