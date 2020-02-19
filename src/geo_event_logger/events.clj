@@ -6,4 +6,6 @@
 (defn all []
   (into [] (sql/query db/spec ["select * from events order by id desc"])))
 
-(defn create [event] (sql/insert! db/spec :events [:body] [event]))
+(defn create [event]
+  (let [clean-event (select-keys [:longlat :image] event)]
+    (sql/insert! db/spec :events [:body] [clean-event])))

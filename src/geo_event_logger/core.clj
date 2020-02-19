@@ -17,7 +17,8 @@
             )
   (:gen-class))
 
-(defn log-event []
+(defn log-event [event]
+  (events/create event)
   {:status 200
    :headers {"Content-Type" "text/plain"}
    :body "{}"})
@@ -34,7 +35,7 @@
 
 (defroutes routes
   (GET "/-/health" [] (health-check))
-  (POST "/events"  [] (log-event))
+  (POST "/events"  [event] (log-event event))
   (GET  "/events"  [] (get-events))
   (ANY "*"         [] {:status 404}))
 
