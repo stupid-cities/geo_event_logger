@@ -13,6 +13,9 @@
 (defn migrate []
   (when (not (migrated?))
     (print "Creating database structure...") (flush)
+    
+    (sql/db-do-commands db/spec "CREATE EXTENSION postgis;")
+
     (sql/db-do-commands db/spec
                         (sql/create-table-ddl
                          :events
