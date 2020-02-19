@@ -26,7 +26,7 @@
 
 (defn log-event [event]
   (when (and
-         (valid-api-key? (get-in :api_key event))
+         (valid-api-key? (get-in event [:api_key]))
          (events/valid? event))
     (let [success (events/create event)]
       (if success
