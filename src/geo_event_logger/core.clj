@@ -18,12 +18,15 @@
             [geo-event-logger.db      :as db])
   (:gen-class))
 
-(defn valid-api-key? [key]
-  (crypto/eq? key (System/getenv "API_KEY")))
+(defn api-key [] (System/getenv "API_KEY"))
+
+(defn valid-api-key? [k]
+  (when (and k (api-key))
+    (crypto/eq? k (api-key))))
 
 (defn log-event [event]
   (when (and
-         (valid-api-key? (get-in event "api-key"))
+         (valid-api-key? (get-in :api_key event))
          (events/valid? event))
     (let [success (events/create event)]
       (if success
