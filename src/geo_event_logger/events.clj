@@ -18,25 +18,20 @@
 
 (defn create [event]
   (when (valid? event)
-    (try
-      (let [clean-event (->
-                         event
-                         (select-keys [:lng :lat :resource])
-                         (assoc :geo (spatial/point (Double/parseDouble (:lng event))    ;;This feels dangerous for precision
-                                                    (Double/parseDouble (:lat event))))
-                         (dissoc :lng)
-                         (dissoc :lat))]
-        (sql/insert! db/spec :events clean-event)
-        true)
-      (catch Exception e
-        (println e)
-        nil))))
+    (let [clean-event (->
+                       event
+                       (select-keys [:lng :lat :resource])
+                       (assoc :geo (spatial/point (Double/parseDouble (:lng event))
+                                                  (Double/parseDouble (:lat event))))
+                       (dissoc :lng)
+                       (dissoc :lat))]
+      (sql/insert! db/spec :events clean-event))))
 
 (comment
   (valid? {})
   (valid? {:lng 1 :lat 2})
 
-  (spatial/point "1" "2")
+  (spatial/point "1" )
 
   (Double/parseDouble "-1.1")
 
