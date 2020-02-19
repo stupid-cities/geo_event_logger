@@ -26,8 +26,10 @@
                                                     (Double/parseDouble (:lat event))))
                          (dissoc :lng)
                          (dissoc :lat))]
-        (sql/insert! db/spec :events clean-event))
+        (sql/insert! db/spec :events clean-event)
+        true)
       (catch Exception e
+        (println e)
         nil))))
 
 (comment
