@@ -8,20 +8,21 @@
             [ring.adapter.jetty :as ring]
             [ring.middleware.json :as middleware]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.middleware.params   :refer [wrap-params]]
 
             [cheshire.core :as json]
 
             [geo-event-logger.migrate :as schema]
             [geo-event-logger.events  :as events]
-            [geo-event-logger.db      :as db]
-            )
+            [geo-event-logger.db      :as db])
   (:gen-class))
 
 (defn log-event [event]
-  (events/create event)
-  {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body "{}"})
+  (when (events/valid? event)
+    (let [success (events/create event)]
+      (if success
+        {:status 200 :body event}
+        {:status 500 :body "Error"}))))
 
 (defn get-events []
   (let [events (events/all)]
@@ -35,13 +36,14 @@
 
 (defroutes routes
   (GET "/-/health" [] (health-check))
-  (POST "/events"  [event] (log-event event))
+  (POST "/events"  {event :params} (log-event event))
   (GET  "/events"  [] (get-events))
   (ANY "*"         [] {:status 404}))
 
 (def app
   (->
    routes
+   wrap-params
    handler/site
    (middleware/wrap-json-body {:keywords? true})
    middleware/wrap-json-response))
