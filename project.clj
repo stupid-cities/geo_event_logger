@@ -12,6 +12,7 @@
 
                  [cheshire "5.10.0"]
                  [clj-postgresql "0.7.0"]
+                 [crypto-equality "1.0.0"]
 
                  [environ "1.1.0"]
                  [org.clojure/java.jdbc "0.6.1"]

@@ -11,18 +11,24 @@
             [ring.middleware.params   :refer [wrap-params]]
 
             [cheshire.core :as json]
+            [crypto.equality :as crypto]
 
             [geo-event-logger.migrate :as schema]
             [geo-event-logger.events  :as events]
             [geo-event-logger.db      :as db])
   (:gen-class))
 
+(defn valid-api-key? [key]
+  (crypto/eq? key (System/getenv "API_KEY")))
+
 (defn log-event [event]
-  (when (events/valid? event)
+  (when (and
+         (valid-api-key? (get-in event "api-key"))
+         (events/valid? event))
     (let [success (events/create event)]
       (if success
         {:status 200 :body event}
-        {:status 500 :body "Error"}))))
+        {:status 500}))))
 
 (defn get-events []
   (let [events (events/all)]
