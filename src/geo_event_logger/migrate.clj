@@ -16,10 +16,8 @@
     (sql/db-do-commands db/spec
                         (sql/create-table-ddl
                          :events
-                         [[:id    :serial "PRIMARY KEY"]
-                          [:long  :varchar "NOT NULL"]
-                          [:lat   :varchar "NOT NULL"]
-                          [:image :varchar "NOT NULL"]
-                         [:created_at :timestamp
-                          "NOT NULL" "DEFAULT CURRENT_TIMESTAMP"]]))
+                         [[:id            :serial  "PRIMARY KEY"]
+                          [:longlat       :point   "NOT NULL"]
+                          [:image         :varchar "NOT NULL"]
+                          [:created_at    :timestamp "NOT NULL" "DEFAULT CURRENT_TIMESTAMP"]]))
     (println " done")))
