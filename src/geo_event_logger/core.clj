@@ -4,6 +4,7 @@
             [compojure.route :as route]
             [clojure.java.io :as io]
             [environ.core :refer [env]]
+            [s3-beam.handler :as s3b]
 
             [ring.adapter.jetty :as ring]
             [ring.middleware.json :as middleware]
@@ -44,7 +45,8 @@
   {:status 200 :body "OK"})
 
 (defroutes routes
-  (GET "/-/health" [] (health-check))
+  (GET  "/-/health" [] (health-check))
+  (GET  "/resource/sign"  {params :params} (s3b/s3-sign (store/bucket) (store/aws-zone) (store/access-key) (store/secret-key)))
   (POST "/events"  {event :params} (log-event event))
   (GET  "/events"  [] (get-events))
   (ANY "*"         [] {:status 404}))
