@@ -16,6 +16,7 @@
 
             [geo-event-logger.migrate :as schema]
             [geo-event-logger.events  :as events]
+            [geo-event-logger.store  :as store]
             [geo-event-logger.db      :as db])
   (:gen-class))
 
