@@ -46,17 +46,32 @@
   {:status 200 :body "OK"})
 
 (defroutes routes
-  (GET  "/-/health" [] (health-check))
-  (GET  "/resource/sign"  {params :params} (s3b/s3-sign (store/bucket) (store/aws-zone) (store/access-key) (store/secret-key)))
-  (POST "/events"  {event :params} (log-event event))
-  (GET  "/events"  [] (get-events))
-  (ANY "*"         [] {:status 404}))
+  (GET  "/-/health" []
+        (health-check))
+  (GET  "/sign" {params :params}
+        (s3b/s3-sign (store/bucket) (store/aws-zone) (store/access-key) (store/secret-key)))
+  (POST "/events"  {params :params}
+        (log-event params))
+  (GET  "/events"  []
+        (get-events))
+  (ANY "*"         []
+       {:status 404}))
+
+
+(defn wrap-cors [handler]
+ (fn [request]
+   (let [response (handler request)]
+     (-> response
+         (assoc-in [:headers "Access-Control-Allow-Origin"] "*")
+         (assoc-in [:headers "Access-Control-Allow-Headers"] "x-requested-with")
+         (assoc-in [:headers "Access-Control-Allow-Methods"] "*")))))
 
 (def app
   (->
    routes
    wrap-params
    handler/site
+   (wrap-cors)
    (middleware/wrap-json-body {:keywords? true})
    middleware/wrap-json-response))
 
